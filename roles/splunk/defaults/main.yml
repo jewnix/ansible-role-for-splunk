@@ -95,3 +95,13 @@ splunkshcrep_port: { desc: "Splunk Search Head Clustering Replication", protocol
 splunk_firewall_ports:  # List of ports to allow through local firewall in dict form
   - "{{ splunkweb_port }}"
   - "{{ splunkapi_port }}"
+# Systemd service override limits
+systemd:
+  splunk:
+    override: false # Whether or not to create a systemd override file for splunk with custom limits
+    limit_nofile: 1024000 # Maximum number of open file descriptors
+    limit_nproc: 512000 # Maximum number of processes
+    limit_fsize: infinity # Maximum file size
+    limit_data: infinity # Maximum data size
+    limit_core: infinity # Maximum core file size
+    tasks_max: infinity # Maximum number of tasks

@@ -1,17 +1,21 @@
 ---
-- name: Update the systemd file for Splunk
-  community.general.ini_file:
-    path: "/etc/systemd/system/{{ splunk_service }}.service"
-    section: Service
-    option: "{{ item.option }}"
-    value: "{{ item.value }}"
-    mode: "0644"
+- name: Configure systemd overrides for Splunk
+  when: systemd.splunk.override | default(false)
   become: true
-  loop:
-    - { option: "LimitNOFILE", value: "1024000" }
-    - { option: "LimitNPROC", value: "512000" }
-    - { option: "LimitFSIZE", value: "infinity" }
-    - { option: "LimitDATA", value: "infinity" }
-    - { option: "LimitCORE", value: "infinity" }
-    - { option: "TasksMax", value: "infinity" }
-  notify: reload systemctl daemon
+  block:
+    - name: Create systemd override directory for Splunk
+      ansible.builtin.file:
+        path: "/etc/systemd/system/{{ splunk_service }}.service.d"
+        state: directory
+        mode: "0755"
+        owner: root
+        group: root
+
+    - name: Update the systemd override file for Splunk
+      ansible.builtin.template:
+        src: splunk_systemd_override.conf.j2
+        dest: "/etc/systemd/system/{{ splunk_service }}.service.d/limits.conf"
+        mode: "0644"
+        owner: root
+        group: root
+      notify: reload systemctl daemon
