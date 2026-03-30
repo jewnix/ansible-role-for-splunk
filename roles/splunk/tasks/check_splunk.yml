@@ -23,6 +23,9 @@
 - name: Execute this block only if splunk is already installed
   block:
 
+    - name: Configure nix splunk user and group
+      ansible.builtin.include_tasks: splunk_common/configure_nix_user.yml
+
     - name: Run splunk version command to check currently installed version
       ansible.builtin.include_tasks: check_splunk_version.yml
 

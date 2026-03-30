@@ -27,6 +27,7 @@ splunk_nix_group: splunk
 # splunk_nix_groups: "group1,group2" # Uncomment and add a comma separated list of groups if you want to add the splunk_nix_user to additional groups. Uncomment and leave empty if you want to remove splunk from all additional groups. This can also be set in group_vars or host_vars.
 local_os_user: false  # Whenther or not to force creation of a user using the `luseradd` or not.
 local_os_group: false  # Whether or not to force creation of a group using the `lgroupadd` or not.
+# splunk_nix_pass_max_days: 90  # Set PASS_MAX_DAYS for the splunk OS user. If unset, the OS default is left unchanged. -1 removes password validity checking.
 splunk_uri_lm: undefined
 splunk_license_file: [ ]  # This can be a list of license files to copy to the host.
 splunk_license_group: Trial  # The default matches with the group splunk ships with. You can also set the value via a group_vars or host_vars file.
