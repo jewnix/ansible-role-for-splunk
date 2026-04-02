@@ -51,6 +51,20 @@
       delegate_to: localhost
       changed_when: false
       check_mode: false
+      retries: 10
+      delay: 10
+      register: git_clone_result
+      until: git_clone_result is not failed
+
+    - name: Set ownership of cloned repos to splunk user
+      ansible.builtin.file:
+        path: "{{ git_local_clone_path }}{{ ansible_nodename }}"
+        owner: "{{ splunk_nix_user }}"
+        group: "{{ splunk_nix_group }}"
+        recurse: true
+      delegate_to: localhost
+      become: true
+      changed_when: false
 
     - name: Ensure rsync is installed on target host
       ansible.builtin.package:
