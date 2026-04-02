@@ -70,7 +70,9 @@
     name: "{{ splunk_service }}"
     state: restarted
   become: true
-  when: not start_splunk_handler_fired
+  when:
+    - not start_splunk_handler_fired
+    - not skip_splunk_restart | default(false)
 
 - name: restart redhat auditd service
   ansible.builtin.shell: |
