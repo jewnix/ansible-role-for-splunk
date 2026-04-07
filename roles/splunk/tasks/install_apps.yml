@@ -1,4 +1,6 @@
 ---
+# This task MUST be called by configure_apps.yml to work correctly. Do NOT call this task directly via the deployment_task var!
+
 - name: Check if correct vars are defined for SHC app management
   block:
     - name: Trigger failure if target_shc_group_name var is undefined
