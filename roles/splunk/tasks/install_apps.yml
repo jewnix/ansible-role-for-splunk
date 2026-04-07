@@ -51,8 +51,7 @@
         validate_certs: false
         return_content: true
         status_code: 200
-        body:
-          output_mode=json
+        body: output_mode=json
       check_mode: false
       no_log: true
       changed_when: false
@@ -89,11 +88,3 @@
   become: true
   become_user: "{{ splunk_nix_user }}"
   notify: "{{ handler }}"
-
-- name: Ensure correct permissions are set
-  ansible.builtin.file:
-    path: "{{ splunk_home }}/{{ app_dest }}"
-    owner: "{{ splunk_nix_user }}"
-    group: "{{ splunk_nix_group }}"
-    recurse: true
-  become: true
