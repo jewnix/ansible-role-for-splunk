@@ -72,7 +72,7 @@
   become: true
   when:
     - not start_splunk_handler_fired
-    - not skip_splunk_restart | default(false)
+    - not (skip_splunk_restart | default(false) | bool)
 
 - name: restart redhat auditd service
   ansible.builtin.shell: |
