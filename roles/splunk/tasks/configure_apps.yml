@@ -109,12 +109,14 @@
       become: true
       loop: "{{ git_apps | map(attribute='splunk_app_deploy_path', default=splunk_app_deploy_path) | unique | list }}"
 
+  always:
     - name: Cleanup the local directory that was used to manage repos on the target host
       ansible.builtin.file:
         path: "{{ git_local_clone_path }}{{ ansible_nodename }}"
         state: absent
       delegate_to: localhost
       changed_when: false
+      check_mode: false
 
   # Conditional for block
   when:
