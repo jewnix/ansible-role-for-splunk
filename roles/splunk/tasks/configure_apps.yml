@@ -29,6 +29,7 @@
       ansible.builtin.file:
         path: "{{ git_local_clone_path }}{{ ansible_nodename }}"
         state: directory
+        mode: "0755"
       delegate_to: localhost
       changed_when: false
 
@@ -36,6 +37,7 @@
       ansible.builtin.copy:
         src: rsync-filter
         dest: "{{ git_local_clone_path }}{{ ansible_nodename }}/.rsync-filter"
+        mode: "0644"
       delegate_to: localhost
       changed_when: false
 
@@ -55,6 +57,15 @@
       delay: 10
       register: git_clone_result
       until: git_clone_result is not failed
+
+    # Required for connection: local + become_user splunk on synchronize: rsync sender runs as splunk and must read the clone tree.
+    - name: Ensure local clone tree is readable by other local users
+      ansible.builtin.file:
+        path: "{{ git_local_clone_path }}{{ ansible_nodename }}"
+        mode: "a+rX"
+        recurse: true
+      delegate_to: localhost
+      changed_when: false
 
     - name: Ensure rsync is installed on target host
       ansible.builtin.package:
@@ -98,12 +109,14 @@
       become: true
       loop: "{{ git_apps | map(attribute='splunk_app_deploy_path', default=splunk_app_deploy_path) | unique | list }}"
 
+  always:
     - name: Cleanup the local directory that was used to manage repos on the target host
       ansible.builtin.file:
         path: "{{ git_local_clone_path }}{{ ansible_nodename }}"
         state: absent
       delegate_to: localhost
       changed_when: false
+      check_mode: false
 
   # Conditional for block
   when:
